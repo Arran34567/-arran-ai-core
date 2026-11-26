@@ -59,6 +59,27 @@
         statusEl.innerText = "● ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้";
         statusEl.style.color = "#f87171";
       }
+    }    function smartReply(msg) {
+      var m = msg.toLowerCase();
+      if (m.includes("สวัสดี") || m.includes("หวัดดี") || m.includes("ฮัลโหล") || m.includes("hello")) {
+        return "สวัสดีครับพี่ 🙏 ยินดีต้อนรับสู่ Arran AI Core ครับ พี่อยากคุยเล่น หรืออยากดูสินค้าร้าน Arran Shop ดีครับ? พิมพ์คำว่า ราคา ได้เลยครับ";
+      }
+      if (m.includes("ราคา") || m.includes("เสื้อ") || m.includes("กางเกง") || m.includes("หมวก") || m.includes("ชุด") || m.includes("สินค้า")) {
+        return "ราคาสินค้า Arran Shop ครับพี่ 👕\n• เสื้อ 350 บาท\n• กางเกง 490 บาท\n• หมวก 190 บาท\n• เซ็ต 3 ชิ้น 990 บาท\n• ค่าส่ง 50 บาท สั่งครบ 1,000 ส่งฟรีครับ\nพิมพ์คำว่า สั่งซื้อ ได้เลยครับ";
+      }
+      if (m.includes("สั่ง") || m.includes("ซื้อ")) {
+        return "รับทราบครับพี่ 🛒 พี่พิมพ์ชื่อสินค้าที่ต้องการได้เลยครับ เช่น เสื้อ หรือ เซ็ต 3 ชิ้น แล้วผมจะสรุปยอดให้ครับ";
+      }
+      if (m.includes("ส่ง") || m.includes("ค่าส่ง") || m.includes("จัดส่ง")) {
+        return "ค่าส่ง 50 บาทครับพี่ สั่งครบ 1,000 บาทส่งฟรีครับ 📦";
+      }
+      if (m.includes("ขอบคุณ") || m.includes("ขอบใจ")) {
+        return "ยินดีครับพี่ ❤️ พี่น้องไม่ทิ้งกัน มีอะไรให้ช่วยอีกพิมพ์มาได้เลยครับ";
+      }
+      if (m.includes("อารัญ") || m.includes("เจ้าของ") || m.includes("ใคร")) {
+        return "ร้านนี้ของพี่อารัญ คหาปนะ ครับ 😊 Arran AI Core สร้างมาเพื่อให้พี่น้องได้คุยกัน พี่น้องไม่ทิ้งกันครับ";
+      }
+      return "รับทราบครับพี่: " + msg + " — พี่อยากคุยเล่น หรืออยากดู ราคา สินค้า ดีครับ? พิมพ์คำว่า ราคา ได้เลยครับ";
     }
     async function sendMessage() {
       const inputEl = document.getElementById("user-input");
@@ -73,7 +94,7 @@
           body: JSON.stringify({ message: text })
         });
         const data = await res.json();
-        addMsg(data.reply, "msg-ai");
+             addMsg(smartReply(text), "msg-ai");   
       } catch (err) {
         addMsg("ส่งข้อความไม่สำเร็จครับ", "msg-ai msg-error");
       }
