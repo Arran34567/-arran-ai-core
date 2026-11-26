@@ -60,7 +60,17 @@
         statusEl.style.color = "#f87171";
       }
     }    function smartReply(msg) {
-      var m = msg.toLowerCase();
+      var m = msg.toLowerCase();      // รับออเดอร์ + คิดยอดเอง
+      var orderMatch = m.match(/(เสื้อ|กางเกง|หมวก|เซ็ต|ชุด)\s*(\d+)/);
+      if (orderMatch) {
+        var prices = { "เสื้อ": 350, "กางเกง": 490, "หมวก": 190, "เซ็ต": 990, "ชุด": 990 };
+        var item = orderMatch[1];
+        var qty = parseInt(orderMatch[2], 10);
+        var total = prices[item] * qty;
+        var ship = total >= 1000 ? 0 : 50;
+        var grand = total + ship;
+        return "สรุปออเดอร์ครับพี่ 🛒\n• " + item + " " + qty + " ชิ้น = " + total + " บาท\n• ค่าส่ง " + ship + " บาท" + (ship === 0 ? " (ส่งฟรีครับ 🎉)" : "") + "\n• ยอดรวม " + grand + " บาทครับ\n\nถ้าถูกต้อง พิมพ์ชื่อ + ที่อยู่จัดส่งมาได้เลยครับ";
+      }
       if (m.includes("สวัสดี") || m.includes("หวัดดี") || m.includes("ฮัลโหล") || m.includes("hello")) {
         return "สวัสดีครับพี่ 🙏 ยินดีต้อนรับสู่ Arran AI Core ครับ พี่อยากคุยเล่น หรืออยากดูสินค้าร้าน Arran Shop ดีครับ? พิมพ์คำว่า ราคา ได้เลยครับ";
       }
