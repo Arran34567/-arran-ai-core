@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Arran AI Core - พี่น้องไม่ทิ้งกัน</title>
 <style>
-  body { margin: 0; font-family: sans-serif; background: #0f172a; color: #f8fafc; }
-  .container { max-width: 560px; margin: 0 auto; padding: 16px; }
-  .header h2 { margin: 0 0 8px; font-size: 20px; }
-  .status-badge { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 13px; font-weight: bold; background: #334155; }
-  .chat-box { height: 280px; overflow-y: auto; background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 12px; margin: 12px 0; display: flex; flex-direction: column; gap: 10px; }
-  .msg { padding: 10px 14px; border-radius: 12px; max-width: 80%; font-size: 15px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+  body { background: #0f172a; color: #f8fafc; font-family: sans-serif; margin: 0; padding: 0; }
+  .container { max-width: 600px; margin: 0 auto; padding: 16px; }
+  .header { display: flex; justify-content: space-between; align-items: center; }
+  .status-badge { color: #4ade80; font-size: 14px; }
+  .chat-box { display: flex; flex-direction: column; gap: 8px; min-height: 400px; padding: 12px 0; }
+  .msg { padding: 10px 14px; border-radius: 14px; max-width: 85%; white-space: pre-wrap; word-break: break-word; }
   .msg-user { background: #3b82f6; color: #fff; align-self: flex-end; }
   .msg-ai { background: #334155; align-self: flex-start; }
   .msg-error { color: #f87171; }
@@ -32,9 +32,9 @@
   </div>
 </div>
 <script>
-var PRICES =var pendingOrder = null;
+var PRICES = { "เสื้อ": 350, "กางเกง": 490, "หมวก": 190, "เซ็ต": 990 };
 
-function looksLikeAddress(m) { { "เสื้อ": 350, "กางเกง": 490, "หมวก": 190, "เซ็ต": 990 };var pendingOrder = null;
+var pendingOrder = null;
 
 function looksLikeAddress(m) {
   if (m.length < 10) return false;
@@ -52,9 +52,8 @@ function orderSummary(m) {
   else if (m.indexOf("หมวก") !== -1) item = "หมวก";
   else if (m.indexOf("เซ็ต") !== -1 || m.indexOf("เซต") !== -1 || m.indexOf("ชุด") !== -1) item = "เซ็ต";
   if (!item) return null;
-    // แก้จำนวน: "เซ็ต 3 ชิ้น" คือชื่อสินค้า (1 เซ็ต = 990) ไม่ใช่ 3 เซ็ต
   var qty = 1;
-    if (m.includes("เซ็ต") || m.includes("เซต") || m.includes("ชุด")) {
+  if (m.includes("เซ็ต") || m.includes("เซต") || m.includes("ชุด")) {
     var qset = m.match(/(\d+)\s*ชุด/);
     qty = qset ? parseInt(qset[1]) : 1;
   } else {
@@ -64,17 +63,19 @@ function orderSummary(m) {
   var total = qty * PRICES[item];
   var ship = total >= 1000 ? 0 : 50;
   var grand = total + ship;
-  pendingOrder = { item: item, qty: qty, total: total, ship: ship, grand: grand };  return  pendingOrder = { item: item, qty: qty, total: total, ship: ship, grand: grand }; "สรุปออเดอร์ครับพี่ 🛒\n• " + item + " " + qty + " ชิ้น = "" " + qty + " " + (item === "เซ็ต" ? "ชุด" : "ชิ้น") + " = " + total + " บาท\n• ค่าส่ง " + ship + " บาท" + (ship === 0 ? " (ส่งฟรีครับ 🎉)" : "") + "\n• ยอดรวม " + grand + " บาทครับ\n\nถ้าถูกต้อง พิมพ์ชื่อ + ที่อยู่จัดส่งมาได้เลยครับ";
+  pendingOrder = { item: item, qty: qty, total: total, ship: ship, grand: grand };
+  return "สรุปออเดอร์ครับพี่ 🛒\n• " + item + " " + qty + " " + (item === "เซ็ต" ? "ชุด" : "ชิ้น") + " = " + total + " บาท\n• ค่าส่ง " + ship + " บาท" + (ship === 0 ? " (ส่งฟรีครับ 🎉)" : "") + "\n• ยอดรวม " + grand + " บาทครับ\n\nถ้าถูกต้อง พิมพ์ชื่อ + ที่อยู่จัดส่งมาได้เลยครับ";
 }
 
 function smartReply(msg) {
   var m = msg.toLowerCase();
-  var order = orderSummary(m);  if (pendingOrder && looksLikeAddress(m)) {
+  if (pendingOrder && looksLikeAddress(m)) {
     var p = pendingOrder;
     pendingOrder = null;
     var unit = p.item === "เซ็ต" ? "ชุด" : "ชิ้น";
     return "รับออเดอร์แล้วครับพี่ 🎉\n• " + p.item + " " + p.qty + " " + unit + " = " + p.total + " บาท\n• ค่าส่ง " + p.ship + " บาท" + (p.ship === 0 ? " (ส่งฟรีครับ 🎉)" : "") + "\n• ยอดรวม " + p.grand + " บาทครับ\n• จัดส่งที่: " + msg + "\n\nขอบคุณครับพี่ ❤ พี่น้องไม่ทิ้งกัน เดี๋ยวพี่อารัญรีบจัดส่งให้เลยครับ";
   }
+  var order = orderSummary(m);
   if (order) return order;
   if (m.indexOf("สวัสดี") !== -1 || m.indexOf("หวัดดี") !== -1 || m.indexOf("ฮัลโหล") !== -1 || m.indexOf("hello") !== -1) {
     return "สวัสดีครับพี่ 🙏 ยินดีต้อนรับสู่ Arran AI Core ครับ พี่อยากคุยเล่น หรืออยากดูสินค้าร้าน Arran Shop ดีครับ? พิมพ์คำว่า ราคา ได้เลยครับ";
@@ -133,5 +134,6 @@ function checkStatus() {
 checkStatus();
 </script>
 </body>
-</html>
+</html> 
+
 
