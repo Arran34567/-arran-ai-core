@@ -45,9 +45,15 @@ function orderSummary(m) {
   else if (m.indexOf("หมวก") !== -1) item = "หมวก";
   else if (m.indexOf("เซ็ต") !== -1 || m.indexOf("เซต") !== -1 || m.indexOf("ชุด") !== -1) item = "เซ็ต";
   if (!item) return null;
-  var num = m.match(/(\d+)/);
-  if (!num) return null;
-  var qty = parseInt(num[1], 10);
+    // แก้จำนวน: "เซ็ต 3 ชิ้น" คือชื่อสินค้า (1 เซ็ต = 990) ไม่ใช่ 3 เซ็ต
+  var qty = 1;
+    if (m.includes("เซ็ต") || m.includes("เซต") || m.includes("ชุด")) {
+    var qset = m.match(/(\d+)\s*ชุด/);
+    qty = qset ? parseInt(qset[1]) : 1;
+  } else {
+    var q = m.match(/(\d+)/);
+    qty = q ? parseInt(q[1]) : 1;
+  }
   var total = qty * PRICES[item];
   var ship = total >= 1000 ? 0 : 50;
   var grand = total + ship;
