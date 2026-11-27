@@ -45,6 +45,16 @@ function priceList() {
   return "ราคาสินค้า Arran Shop ครับพี่ 👕\n• เสื้อ 350 บาท\n• กางเกง 490 บาท\n• หมวก 190 บาท\n• เซ็ต 3 ชิ้น 990 บาท\n• ค่าส่ง 50 บาท สั่งครบ 1,000 ส่งฟรีครับ\nพิมพ์คำว่า สั่งซื้อ ได้เลยครับ";
 }
 
+function notifyOrder(p, address) {
+  try {
+    fetch("https://arran-backend.onrender.com/order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ item: p.item, qty: p.qty, total: p.total, ship: p.ship, grand: p.grand, address: address })
+    }).catch(function () {});
+  } catch (e) {}
+}
+
 function orderSummary(m) {
   var item = null;
   if (m.indexOf("เสื้อ") !== -1) item = "เสื้อ";
@@ -72,6 +82,7 @@ function smartReply(msg) {
   if (pendingOrder && looksLikeAddress(m)) {
     var p = pendingOrder;
     pendingOrder = null;
+    notifyOrder(p, msg);
     var unit = p.item === "เซ็ต" ? "ชุด" : "ชิ้น";
     return "รับออเดอร์แล้วครับพี่ 🎉\n• " + p.item + " " + p.qty + " " + unit + " = " + p.total + " บาท\n• ค่าส่ง " + p.ship + " บาท" + (p.ship === 0 ? " (ส่งฟรีครับ 🎉)" : "") + "\n• ยอดรวม " + p.grand + " บาทครับ\n• จัดส่งที่: " + msg + "\n\nขอบคุณครับพี่ ❤ พี่น้องไม่ทิ้งกัน เดี๋ยวพี่อารัญรีบจัดส่งให้เลยครับ";
   }
@@ -134,6 +145,7 @@ function checkStatus() {
 checkStatus();
 </script>
 </body>
-</html> 
+</html>
+
 
 
