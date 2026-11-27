@@ -32,7 +32,14 @@
   </div>
 </div>
 <script>
-var PRICES = { "เสื้อ": 350, "กางเกง": 490, "หมวก": 190, "เซ็ต": 990 };
+var PRICES =var pendingOrder = null;
+
+function looksLikeAddress(m) { { "เสื้อ": 350, "กางเกง": 490, "หมวก": 190, "เซ็ต": 990 };var pendingOrder = null;
+
+function looksLikeAddress(m) {
+  if (m.length < 10) return false;
+  return m.indexOf("ม.") !== -1 || m.indexOf("ต.") !== -1 || m.indexOf("อ.") !== -1 || m.indexOf("จ.") !== -1 || m.indexOf("ถนน") !== -1 || m.indexOf("ซอย") !== -1 || m.indexOf("บ้าน") !== -1 || m.indexOf("เลขที่") !== -1 || /\d{5}/.test(m);
+}
 
 function priceList() {
   return "ราคาสินค้า Arran Shop ครับพี่ 👕\n• เสื้อ 350 บาท\n• กางเกง 490 บาท\n• หมวก 190 บาท\n• เซ็ต 3 ชิ้น 990 บาท\n• ค่าส่ง 50 บาท สั่งครบ 1,000 ส่งฟรีครับ\nพิมพ์คำว่า สั่งซื้อ ได้เลยครับ";
@@ -57,12 +64,17 @@ function orderSummary(m) {
   var total = qty * PRICES[item];
   var ship = total >= 1000 ? 0 : 50;
   var grand = total + ship;
-  return "สรุปออเดอร์ครับพี่ 🛒\n• " + item + " " + qty + " ชิ้น = " + total + " บาท\n• ค่าส่ง " + ship + " บาท" + (ship === 0 ? " (ส่งฟรีครับ 🎉)" : "") + "\n• ยอดรวม " + grand + " บาทครับ\n\nถ้าถูกต้อง พิมพ์ชื่อ + ที่อยู่จัดส่งมาได้เลยครับ";
+  pendingOrder = { item: item, qty: qty, total: total, ship: ship, grand: grand };  return  pendingOrder = { item: item, qty: qty, total: total, ship: ship, grand: grand }; "สรุปออเดอร์ครับพี่ 🛒\n• " + item + " " + qty + " ชิ้น = "" " + qty + " " + (item === "เซ็ต" ? "ชุด" : "ชิ้น") + " = " + total + " บาท\n• ค่าส่ง " + ship + " บาท" + (ship === 0 ? " (ส่งฟรีครับ 🎉)" : "") + "\n• ยอดรวม " + grand + " บาทครับ\n\nถ้าถูกต้อง พิมพ์ชื่อ + ที่อยู่จัดส่งมาได้เลยครับ";
 }
 
 function smartReply(msg) {
   var m = msg.toLowerCase();
-  var order = orderSummary(m);
+  var order = orderSummary(m);  if (pendingOrder && looksLikeAddress(m)) {
+    var p = pendingOrder;
+    pendingOrder = null;
+    var unit = p.item === "เซ็ต" ? "ชุด" : "ชิ้น";
+    return "รับออเดอร์แล้วครับพี่ 🎉\n• " + p.item + " " + p.qty + " " + unit + " = " + p.total + " บาท\n• ค่าส่ง " + p.ship + " บาท" + (p.ship === 0 ? " (ส่งฟรีครับ 🎉)" : "") + "\n• ยอดรวม " + p.grand + " บาทครับ\n• จัดส่งที่: " + msg + "\n\nขอบคุณครับพี่ ❤ พี่น้องไม่ทิ้งกัน เดี๋ยวพี่อารัญรีบจัดส่งให้เลยครับ";
+  }
   if (order) return order;
   if (m.indexOf("สวัสดี") !== -1 || m.indexOf("หวัดดี") !== -1 || m.indexOf("ฮัลโหล") !== -1 || m.indexOf("hello") !== -1) {
     return "สวัสดีครับพี่ 🙏 ยินดีต้อนรับสู่ Arran AI Core ครับ พี่อยากคุยเล่น หรืออยากดูสินค้าร้าน Arran Shop ดีครับ? พิมพ์คำว่า ราคา ได้เลยครับ";
